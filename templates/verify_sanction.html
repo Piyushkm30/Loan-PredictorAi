@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Loan Sanction Verification — LoanPredict AI</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='28'>🏦</text></svg>">
+  <style>
+    .verify-box {
+      max-width: 620px;
+      margin: 4rem auto;
+      padding: 2.5rem;
+      border-radius: var(--radius-lg);
+      position: relative;
+    }
+    .verify-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 8px 18px;
+      border-radius: 999px;
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+    }
+    .verify-badge.valid {
+      background: rgba(52, 211, 153, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(52, 211, 153, 0.4);
+    }
+    .verify-badge.invalid {
+      background: rgba(248, 113, 113, 0.15);
+      color: #f87171;
+      border: 1px solid rgba(248, 113, 113, 0.4);
+    }
+    .sanct-detail-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.95rem;
+    }
+    .sanct-detail-row:last-child { border-bottom: none; }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="/" class="nav-brand">
+    <span class="brand-icon">🏦</span>
+    LoanPredict <span class="gradient-text">AI</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="/predict">Predict</a></li>
+    <li><a href="/dashboard">Dashboard</a></li>
+    <li><a href="/about">About</a></li>
+  </ul>
+</nav>
+
+<div class="page-wrapper">
+  <div class="container">
+    <div class="glass-card verify-box text-center">
+      
+      {% if sanction %}
+        <div class="verify-badge valid">
+          <span style="font-size:1.2rem">🛡️</span> OFFICIAL SANCTION VERIFIED
+        </div>
+        <h2 style="margin-bottom:0.5rem">In-Principle Loan Sanction Letter</h2>
+        <p class="text-secondary mb-4">Reference ID: <strong class="gradient-text">{{ sanction.sanction_id }}</strong></p>
+
+        <div style="text-align:left;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:var(--radius-md);padding:1.25rem 1.5rem;margin-bottom:1.5rem">
+          <div class="sanct-detail-row">
+            <span class="text-muted">Applicant Name:</span>
+            <strong>{{ sanction.applicant_name }}</strong>
+          </div>
+          <div class="sanct-detail-row">
+            <span class="text-muted">Sanctioning Institution:</span>
+            <strong style="color:var(--cyan)">{{ sanction.bank_icon }} {{ sanction.bank_name }}</strong>
+          </div>
+          <div class="sanct-detail-row">
+            <span class="text-muted">Approved Loan Limit:</span>
+            <strong style="color:var(--green);font-size:1.1rem">{{ sanction.loan_amount }}</strong>
+          </div>
+          <div class="sanct-detail-row">
+            <span class="text-muted">Interest Rate (p.a.):</span>
+            <strong>{{ sanction.interest_rate }}</strong>
+          </div>
+          <div class="sanct-detail-row">
+            <span class="text-muted">Estimated Monthly EMI:</span>
+            <strong>{{ sanction.monthly_emi }} / mo</strong>
+          </div>
+          <div class="sanct-detail-row">
+            <span class="text-muted">Repayment Tenure:</span>
+            <strong>{{ sanction.loan_term }}</strong>
+          </div>
+          <div class="sanct-detail-row">
+            <span class="text-muted">Date of Sanction:</span>
+            <strong>{{ sanction.issue_date }}</strong>
+          </div>
+          <div class="sanct-detail-row">
+            <span class="text-muted">Sanction Validity:</span>
+            <strong style="color:var(--amber)">{{ sanction.valid_until }}</strong>
+          </div>
+        </div>
+
+        <div class="d-flex gap-2 justify-center">
+          <a href="/sanction-letter/{{ sanction.sanction_id }}" class="btn-primary">📜 View Full Official Letter</a>
+          <a href="/predict" class="btn-secondary">🔮 Check Another Profile</a>
+        </div>
+
+      {% else %}
+        <div class="verify-badge invalid">
+          <span>❌</span> RECORD NOT FOUND
+        </div>
+        <h2>Invalid Sanction Reference</h2>
+        <p class="text-secondary mb-4">The sanction ID <code>{{ sanction_id }}</code> could not be verified in our current active registry.</p>
+        <a href="/predict" class="btn-primary">Generate a New Prediction</a>
+      {% endif %}
+
+    </div>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

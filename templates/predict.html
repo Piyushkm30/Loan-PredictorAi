@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LoanPredict AI — Loan Prediction</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='28'>🏦</text></svg>">
+</head>
+<body>
+
+<!-- ── Navbar ─────────────────────────────────────────────── -->
+<nav class="navbar">
+  <a href="/" class="nav-brand">
+    <span class="brand-icon">🏦</span>
+    LoanPredict <span class="gradient-text">AI</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="/predict" class="active">Predict</a></li>
+    <li><a href="/dashboard">Dashboard</a></li>
+    <li><a href="/about">About</a></li>
+  </ul>
+  <div class="nav-actions">
+    <button class="btn-icon" id="themeToggle" title="Toggle theme" aria-label="Toggle theme">☀️</button>
+    <button class="btn-icon hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+<div class="mobile-nav" id="mobileNav">
+  <a href="/">🏠 Home</a>
+  <a href="/predict">🔮 Loan Prediction</a>
+  <a href="/dashboard">📊 Dashboard</a>
+  <a href="/about">ℹ️ About</a>
+</div>
+
+<!-- ── Loading overlay ────────────────────────────────────── -->
+<div class="loading-overlay" id="loadingOverlay" role="status" aria-live="polite">
+  <div class="spinner"></div>
+  <div class="loading-text">Analyzing your financial profile…</div>
+</div>
+
+<div class="page-wrapper">
+
+  <!-- ── Hero ──────────────────────────────────────────────── -->
+  <div class="predict-hero">
+    <div class="orb orb-1" style="width:280px;height:280px;opacity:.15"></div>
+    <div class="orb orb-2" style="width:220px;height:220px;opacity:.12"></div>
+    <div class="container">
+      <div class="hero-badge" style="justify-content:center">
+        <span class="dot"></span>
+        Powered by Gradient Boosting ML
+      </div>
+      <h1>Check Your <span class="gradient-text">Loan Eligibility</span></h1>
+      <p>Fill in your financial details below. Our AI model will assess your profile and return an instant prediction.</p>
+    </div>
+  </div>
+
+  <div class="container" style="max-width:860px;padding-bottom:5rem">
+
+    <!-- ── Prediction Form ───────────────────────────────────── -->
+    <form id="predictForm" novalidate>
+      <div class="glass-card" style="padding:2rem 2.5rem;margin-bottom:1.5rem">
+        <h3 style="margin-bottom:1.5rem;font-size:1.1rem">
+          👤 Personal Information
+        </h3>
+        <div class="form-grid">
+
+          <!-- Applicant Name -->
+          <div class="form-group span-2">
+            <label class="form-label" for="applicant_name">Applicant Full Name</label>
+            <input type="text" id="applicant_name" name="applicant_name" class="form-control" placeholder="Enter full name (e.g. Rahul Sharma)" required>
+            <div class="input-hint">Name to be issued on the official pre-approved sanction letter.</div>
+          </div>
+
+          <!-- Gender (Segmented Pills) -->
+          <div class="form-group">
+            <label class="form-label">Gender</label>
+            <div class="seg-group">
+              <label class="seg-pill">
+                <input type="radio" name="gender" value="Male" checked>
+                <span>👨 Male</span>
+              </label>
+              <label class="seg-pill">
+                <input type="radio" name="gender" value="Female">
+                <span>👩 Female</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Marital Status (Segmented Pills) -->
+          <div class="form-group">
+            <label class="form-label">Marital Status</label>
+            <div class="seg-group">
+              <label class="seg-pill">
+                <input type="radio" name="married" value="Yes" checked>
+                <span>💍 Married</span>
+              </label>
+              <label class="seg-pill">
+                <input type="radio" name="married" value="No">
+                <span>🧍 Single</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Dependents (Segmented 4-Pills) -->
+          <div class="form-group">
+            <label class="form-label">Number of Dependents</label>
+            <div class="seg-group four-cols">
+              <label class="seg-pill">
+                <input type="radio" name="dependents" value="0" checked>
+                <span>0</span>
+              </label>
+              <label class="seg-pill">
+                <input type="radio" name="dependents" value="1">
+                <span>1</span>
+              </label>
+              <label class="seg-pill">
+                <input type="radio" name="dependents" value="2">
+                <span>2</span>
+              </label>
+              <label class="seg-pill">
+                <input type="radio" name="dependents" value="3">
+                <span>3+</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Education (Segmented Pills) -->
+          <div class="form-group">
+            <label class="form-label">Education Level</label>
+            <div class="seg-group">
+              <label class="seg-pill">
+                <input type="radio" name="education" value="Graduate" checked>
+                <span>🎓 Graduate</span>
+              </label>
+              <label class="seg-pill">
+                <input type="radio" name="education" value="Not Graduate">
+                <span>📖 Non-Graduate</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Employment Status (Segmented Pills) -->
+          <div class="form-group">
+            <label class="form-label">Employment Type</label>
+            <div class="seg-group">
+              <label class="seg-pill">
+                <input type="radio" name="self_employed" value="No" checked>
+                <span>💼 Salaried</span>
+              </label>
+              <label class="seg-pill">
+                <input type="radio" name="self_employed" value="Yes">
+                <span>🏢 Self-Employed</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Property Location Area (Segmented 3-Pills) -->
+          <div class="form-group">
+            <label class="form-label">Property Location Area</label>
+            <div class="seg-group three-cols">
+              <label class="seg-pill">
+                <input type="radio" name="property_area" value="Urban" checked>
+                <span>🏙️ Urban</span>
+              </label>
+              <label class="seg-pill">
+                <input type="radio" name="property_area" value="Semiurban">
+                <span>🏡 Semi-Urban</span>
+              </label>
+              <label class="seg-pill">
+                <input type="radio" name="property_area" value="Rural">
+                <span>🌾 Rural</span>
+              </label>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="glass-card" style="padding:2rem 2.5rem;margin-bottom:1.5rem">
+        <h3 style="margin-bottom:1.5rem;font-size:1.1rem">
+          💰 Financial Details
+        </h3>
+        <div class="form-grid">
+
+          <!-- Applicant Income (range) -->
+          <div class="form-group span-2">
+            <div class="d-flex align-center justify-between mb-1">
+              <label class="form-label" for="applicant_income">Applicant Monthly Income</label>
+              <span class="range-val" id="applicant_income_val">₹50,000</span>
+            </div>
+            <input type="range" id="applicant_income" name="applicant_income"
+              min="15000" max="800000" step="1000" value="50000"
+              data-prefix="₹" data-suffix=""
+              oninput="updateSlider(this)" onchange="updateSlider(this)">
+            <div class="range-labels"><span>₹15,000</span><span>₹8,00,000</span></div>
+            <div class="quick-presets">
+              <span class="preset-label">Quick Presets:</span>
+              <button type="button" class="preset-btn" data-val="25000" onclick="setSliderPreset('applicant_income', 25000)">₹25K</button>
+              <button type="button" class="preset-btn active" data-val="50000" onclick="setSliderPreset('applicant_income', 50000)">₹50K</button>
+              <button type="button" class="preset-btn" data-val="100000" onclick="setSliderPreset('applicant_income', 100000)">₹1 Lakh</button>
+              <button type="button" class="preset-btn" data-val="250000" onclick="setSliderPreset('applicant_income', 250000)">₹2.5 Lakh</button>
+              <button type="button" class="preset-btn" data-val="500000" onclick="setSliderPreset('applicant_income', 500000)">₹5 Lakh</button>
+            </div>
+          </div>
+
+          <!-- Co-applicant Income (range) -->
+          <div class="form-group span-2">
+            <div class="d-flex align-center justify-between mb-1">
+              <label class="form-label" for="coapplicant_income">Co-Applicant Monthly Income (Optional)</label>
+              <span class="range-val" id="coapplicant_income_val">₹0</span>
+            </div>
+            <input type="range" id="coapplicant_income" name="coapplicant_income"
+              min="0" max="400000" step="1000" value="0"
+              data-prefix="₹" data-suffix=""
+              oninput="updateSlider(this)" onchange="updateSlider(this)">
+            <div class="range-labels"><span>₹0</span><span>₹4,00,000</span></div>
+            <div class="quick-presets">
+              <span class="preset-label">Quick Presets:</span>
+              <button type="button" class="preset-btn active" data-val="0" onclick="setSliderPreset('coapplicant_income', 0)">None (₹0)</button>
+              <button type="button" class="preset-btn" data-val="20000" onclick="setSliderPreset('coapplicant_income', 20000)">₹20K</button>
+              <button type="button" class="preset-btn" data-val="50000" onclick="setSliderPreset('coapplicant_income', 50000)">₹50K</button>
+              <button type="button" class="preset-btn" data-val="100000" onclick="setSliderPreset('coapplicant_income', 100000)">₹1 Lakh</button>
+            </div>
+          </div>
+
+          <!-- Loan Amount (range span-2) -->
+          <div class="form-group span-2">
+            <div class="d-flex align-center justify-between mb-1">
+              <label class="form-label" for="loan_amount">Requested Loan Amount</label>
+              <span class="range-val highlight-cyan" id="loan_amount_val" style="font-size:1.1rem;font-weight:700">₹15,00,000</span>
+            </div>
+            <input type="range" id="loan_amount" name="loan_amount"
+              min="100000" max="7000000" step="25000" value="1500000"
+              data-prefix="₹" data-suffix=""
+              oninput="updateSlider(this)" onchange="updateSlider(this)">
+            <div class="range-labels"><span>₹1 Lakh</span><span>₹70 Lakh</span></div>
+            <div class="quick-presets">
+              <span class="preset-label">Quick Presets:</span>
+              <button type="button" class="preset-btn" data-val="500000" onclick="setSliderPreset('loan_amount', 500000)">₹5 Lakh</button>
+              <button type="button" class="preset-btn" data-val="1000000" onclick="setSliderPreset('loan_amount', 1000000)">₹10 Lakh</button>
+              <button type="button" class="preset-btn active" data-val="1500000" onclick="setSliderPreset('loan_amount', 1500000)">₹15 Lakh</button>
+              <button type="button" class="preset-btn" data-val="2500000" onclick="setSliderPreset('loan_amount', 2500000)">₹25 Lakh</button>
+              <button type="button" class="preset-btn" data-val="5000000" onclick="setSliderPreset('loan_amount', 5000000)">₹50 Lakh</button>
+            </div>
+          </div>
+
+          <!-- Loan Term -->
+          <div class="form-group">
+            <label class="form-label" for="loan_term">Loan Repayment Term</label>
+            <select id="loan_term" name="loan_term" class="form-control" required>
+              <option value="">Select term</option>
+              <option value="12">12 months (1 yr)</option>
+              <option value="36">36 months (3 yrs)</option>
+              <option value="60">60 months (5 yrs)</option>
+              <option value="84">84 months (7 yrs)</option>
+              <option value="120">120 months (10 yrs)</option>
+              <option value="180">180 months (15 yrs)</option>
+              <option value="240">240 months (20 yrs)</option>
+              <option value="300">300 months (25 yrs)</option>
+              <option value="360" selected>360 months (30 yrs)</option>
+              <option value="480">480 months (40 yrs)</option>
+            </select>
+            <div class="input-hint">Longer terms lower monthly EMIs.</div>
+          </div>
+
+          <!-- Preferred Bank Selection -->
+          <div class="form-group">
+            <label class="form-label" for="bank">Preferred Bank / Lender</label>
+            <select id="bank" name="bank" class="form-control" required>
+              <option value="any">🌟 Any Bank (Find Best 5–6 Matches)</option>
+              <option value="sbi" selected>🏛️ State Bank of India (SBI)</option>
+              <option value="hdfc">🏦 HDFC Bank</option>
+              <option value="icici">💳 ICICI Bank</option>
+              <option value="axis">🏛️ Axis Bank</option>
+              <option value="pnb">🏢 Punjab National Bank (PNB)</option>
+              <option value="bob">🏦 Bank of Baroda (BOB)</option>
+              <option value="kotak">💎 Kotak Mahindra Bank</option>
+              <option value="bajaj">⚡ Bajaj Finserv (Flexible NBFC)</option>
+              <option value="federal">🌿 Federal Bank</option>
+              <option value="canara">🏛️ Canara Bank</option>
+              <option value="indusind">🏦 IndusInd Bank</option>
+              <option value="tata">💼 Tata Capital (NBFC)</option>
+              <option value="piramal">🏢 Piramal Capital & Housing</option>
+            </select>
+            <div class="input-hint">Select your desired bank or let AI find top approvals.</div>
+          </div>
+
+          <!-- Credit History -->
+          <div class="form-group span-2">
+            <label class="form-label" for="credit_history">Credit History Guideline</label>
+            <select id="credit_history" name="credit_history" class="form-control" required>
+              <option value="">Select credit history</option>
+              <option value="Yes" selected>Good (CIBIL 700+ / Meets standard lending guidelines)</option>
+              <option value="No">Poor / None (Past delays or no prior credit score)</option>
+            </select>
+            <div class="input-hint">Credit history is the strongest approval factor.</div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <div class="form-submit-row">
+        <button type="submit" class="btn-primary btn-lg">
+          🔮 Predict Loan Approval
+        </button>
+        <button type="button" class="btn-secondary btn-lg" id="resetBtn">
+          🔄 Reset Form
+        </button>
+      </div>
+    </form>
+
+    <!-- ── Result ─────────────────────────────────────────────── -->
+    <div id="resultSection" style="display:none;margin-top:2rem"></div>
+
+    <!-- ── History ───────────────────────────────────────────── -->
+    <div class="glass-card mt-4" style="padding:1.75rem">
+      <div class="d-flex align-center justify-between mb-3">
+        <h3 style="font-size:1rem">📋 Prediction History</h3>
+        <button class="btn-icon" onclick="loadHistory()" title="Refresh">🔄</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th><th>Time</th><th>Income</th><th>Loan</th><th>Bank</th>
+              <th>Credit</th><th>Status</th><th>Probability</th><th>Risk</th>
+            </tr>
+          </thead>
+          <tbody id="historyBody">
+            <tr><td colspan="9" style="text-align:center;color:var(--text-muted)">No predictions yet</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- /container -->
+</div><!-- /page-wrapper -->
+
+<div id="toast-container"></div>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
